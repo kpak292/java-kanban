@@ -1,4 +1,4 @@
-package TaskManager;
+package TaskManager.Model;
 
 public enum TaskStatus {
     NEW,

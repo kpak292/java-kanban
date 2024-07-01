@@ -1,5 +1,7 @@
-import TaskManager.*;
-import java.util.ArrayList;
+package TaskManager;
+
+import TaskManager.Controller.TaskManager;
+import TaskManager.Model.*;
 
 public class Main {
 
@@ -8,49 +10,49 @@ public class Main {
 
         //Тестирование добавления задачи без Эпика
         System.out.println("1: Проверка добавления подзадачи без Эпика");
-        manager.addTask(new Subtask("test","test",0));
+        manager.addTask(new Subtask("test", "test", 0));
         printDelimiter();
 
         //Добавление тестовых данных
         System.out.println("2: Проверка добавления задач");
         addTestData(manager);
-        if (manager.getAllTasks().size()==7){
+        if (manager.getAllTasks().size() == 7) {
             System.out.println("Успешно");
-        }else {
+        } else {
             System.out.println("Неуспешно");
         }
         printDelimiter();
 
         //Тестирование отображения списка задач по типам
         System.out.println("3: Проверка получения списка Задач");
-        if (manager.getTasksByType(TaskType.TASK).size()==2){
+        if (manager.getTasksByType(TaskType.TASK).size() == 2) {
             System.out.println("Успешно");
-        }else {
+        } else {
             System.out.println("Неуспешно");
         }
         printDelimiter();
 
         System.out.println("4: Проверка получения списка Эпиков");
-        if (manager.getTasksByType(TaskType.EPIC).size()==2){
+        if (manager.getTasksByType(TaskType.EPIC).size() == 2) {
             System.out.println("Успешно");
-        }else {
+        } else {
             System.out.println("Неуспешно");
         }
         printDelimiter();
 
         System.out.println("5: Проверка получения списка Подзадач");
-        if (manager.getTasksByType(TaskType.SUBTASK).size()==3){
+        if (manager.getTasksByType(TaskType.SUBTASK).size() == 3) {
             System.out.println("Успешно");
-        }else {
+        } else {
             System.out.println("Неуспешно");
         }
         printDelimiter();
 
         //Тестирование получения списка всех задач
         System.out.println("6: Проверка получения всех задач");
-        if (manager.getAllTasks().size()==7){
+        if (manager.getAllTasks().size() == 7) {
             System.out.println("Успешно");
-        }else {
+        } else {
             System.out.println("Неуспешно");
         }
         printDelimiter();
@@ -58,32 +60,32 @@ public class Main {
         //Тестирование удаления всех задач
         System.out.println("7: Тестирование удаления всех задач");
         manager.deleteAllTasks();
-        if (manager.getAllTasks().size()==0){
+        if (manager.getAllTasks().size() == 0) {
             System.out.println("Успешно");
-        }else {
+        } else {
             System.out.println("Неуспешно");
         }
         printDelimiter();
 
-        //Тестирование удаления категории TaskManager.Task
+        //Тестирование удаления категории Model.Task
         addTestData(manager);
-        System.out.println("8: Тестирование удаления категории TaskManager.Task");
+        System.out.println("8: Тестирование удаления категории Model.Task");
         manager.deleteTasksByType(TaskType.TASK);
-        if (manager.getAllTasks().size()==5){
+        if (manager.getAllTasks().size() == 5) {
             System.out.println("Успешно");
-        }else {
+        } else {
             System.out.println("Неуспешно");
         }
         manager.deleteAllTasks();
         printDelimiter();
 
-        //Тестирование удаления категории TaskManager.Epic
+        //Тестирование удаления категории Model.Epic
         addTestData(manager);
-        System.out.println("9: Тестирование удаления категории TaskManager.Epic");
+        System.out.println("9: Тестирование удаления категории Model.Epic");
         manager.deleteTasksByType(TaskType.EPIC);
-        if (manager.getAllTasks().size()==2){
+        if (manager.getAllTasks().size() == 2) {
             System.out.println("Успешно");
-        }else {
+        } else {
             System.out.println("Неуспешно");
         }
         manager.deleteAllTasks();
@@ -93,9 +95,9 @@ public class Main {
         addTestData(manager);
         System.out.println("10: Тестирование удаления категории SubTask");
         manager.deleteTasksByType(TaskType.SUBTASK);
-        if (manager.getAllTasks().size()==4){
+        if (manager.getAllTasks().size() == 4) {
             System.out.println("Успешно");
-        }else {
+        } else {
             System.out.println("Неуспешно");
         }
         manager.deleteAllTasks();
@@ -108,9 +110,9 @@ public class Main {
         printDelimiter();
 
         System.out.println("12: Тестируем получения задачи по ИД 30");
-        if (manager.getTaskById(30).getTaskID()==30){
+        if (manager.getTaskById(30).getId() == 30) {
             System.out.println("Успешно");
-        }else {
+        } else {
             System.out.println("Неуспешно");
         }
         printDelimiter();
@@ -140,11 +142,11 @@ public class Main {
         addTestData(manager);
         System.out.println("16: Тестируем замену таска со статусом");
         Task task = manager.taskClone(manager.getTaskById(36));
-        task.setTaskStatus(TaskStatus.DONE);
+        task.setStatus(TaskStatus.DONE);
         manager.updateTask(task);
-        if (manager.getTaskById(36).getTaskStatus()==TaskStatus.DONE){
+        if (manager.getTaskById(36).getStatus() == TaskStatus.DONE) {
             System.out.println("Успешно");
-        }else {
+        } else {
             System.out.println("Неуспешно");
         }
         printDelimiter();
@@ -152,16 +154,16 @@ public class Main {
         System.out.println("17: Тестируем изменение статуса эпика");
         System.out.println(manager.getTaskById(38));
         task = manager.taskClone(manager.getTaskById(38));
-        task.setTaskStatus(TaskStatus.DONE);
+        task.setStatus(TaskStatus.DONE);
         printDelimiter();
 
         System.out.println("18: Тестируем изменения имени и описания эпика");
-        task.setTaskName("Epic1 updated");
-        task.setTaskDescription("Epic1 updated");
+        task.setName("Epic1 updated");
+        task.setDescription("Epic1 updated");
         manager.updateTask(task);
-        if (manager.getTaskById(38).getTaskName().equals(manager.getTaskById(38).getTaskDescription())){
+        if (manager.getTaskById(38).getName().equals(manager.getTaskById(38).getDescription())) {
             System.out.println("Успешно");
-        }else {
+        } else {
             System.out.println("Неуспешно");
         }
         printDelimiter();
@@ -169,12 +171,12 @@ public class Main {
         System.out.println("19: Тестируем апдейт статуса Эпика с 1 подзадачей");
         Epic epic1 = (Epic) manager.getTaskById(36);
         task = manager.taskClone(manager.getTaskById(40));
-        task.setTaskStatus(TaskStatus.DONE);
+        task.setStatus(TaskStatus.DONE);
         manager.updateTask(task);
 
-        if (epic1.getTaskStatus()==TaskStatus.DONE){
+        if (epic1.getStatus() == TaskStatus.DONE) {
             System.out.println("Успешно");
-        }else {
+        } else {
             System.out.println("Неуспешно");
         }
         printDelimiter();
@@ -183,44 +185,34 @@ public class Main {
         Epic epic2 = (Epic) manager.getTaskById(37);
         task = manager.taskClone(manager.getTaskById(41));
         Task task2 = manager.taskClone(manager.getTaskById(42));
-        task.setTaskStatus(TaskStatus.DONE);
+        task.setStatus(TaskStatus.DONE);
         manager.updateTask(task);
-        task2.setTaskStatus(TaskStatus.DONE);
+        task2.setStatus(TaskStatus.DONE);
         manager.updateTask(task2);
-        if (epic2.getTaskStatus()==TaskStatus.DONE){
+        if (epic2.getStatus() == TaskStatus.DONE) {
             System.out.println("Успешно");
-        }else {
+        } else {
             System.out.println("Неуспешно");
         }
         printDelimiter();
 
     }
 
-    public static void printDelimiter(){
+    public static void printDelimiter() {
         System.out.println("-".repeat(20));
     }
 
-    public static void printTasks(ArrayList<Task> tasksToPrint){
-        if(tasksToPrint.isEmpty()){
-            System.out.println("Список задач пуст");
-        }
-
-        for(Task task:tasksToPrint){
-            System.out.println(task);
-        }
-    }
-
-    public static void addTestData(TaskManager manager){
+    public static void addTestData(TaskManager manager) {
         //Создание материала для тестирования
-        Task task1 = new Task("Task1","Update test");
-        Task task2 = new Task("Task2","Delete test");
-        Epic epic1 = new Epic("Epic1","TaskManager.Epic + 1 subtask");
-        Epic epic2 = new Epic("Epic2","TaskManager.Epic + 2 subtasks");
+        Task task1 = new Task("Task1", "Update test");
+        Task task2 = new Task("Task2", "Delete test");
+        Epic epic1 = new Epic("Epic1", "Model.Epic + 1 subtask");
+        Epic epic2 = new Epic("Epic2", "Model.Epic + 2 subtasks");
         manager.addTask(epic1);
         manager.addTask(epic2);
-        Subtask subTask1 = new Subtask("Subtask1", "epic1 test",epic1.getTaskID());
-        Subtask subTask2 = new Subtask("Subtask2", "epic2 test",epic2.getTaskID());
-        Subtask subTask3 = new Subtask("Subtask3", "epic2 test",epic2.getTaskID());
+        Subtask subTask1 = new Subtask("Subtask1", "epic1 test", epic1.getId());
+        Subtask subTask2 = new Subtask("Subtask2", "epic2 test", epic2.getId());
+        Subtask subTask3 = new Subtask("Subtask3", "epic2 test", epic2.getId());
 
         //Добавления тасков
         manager.addTask(task1);
