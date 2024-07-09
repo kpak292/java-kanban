@@ -1,5 +1,7 @@
 package TaskManager.Model;
 
+import TaskManager.Model.Commons.Status;
+
 import java.util.Objects;
 
 //Основной класс задач,
@@ -7,7 +9,7 @@ public class Task {
     protected int id;
     protected String name;
     protected String description;
-    protected TaskStatus status = TaskStatus.NEW;
+    protected Status status = Status.NEW;
 
     public Task(String name, String description) {
         this.name = name;
@@ -18,16 +20,15 @@ public class Task {
         return id;
     }
 
-    //Закрываем доступность, ИД будет присваиваться только менеджером
     public void setId(int id) {
         this.id = id;
     }
 
-    public void setStatus(TaskStatus status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
-    public TaskStatus getStatus() {
+    public Status getStatus() {
         return status;
     }
 

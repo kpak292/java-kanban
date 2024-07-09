@@ -1,19 +1,28 @@
-package TaskManager.Controller;
+package TaskManager.Service.Implementation;
 
-import TaskManager.Model.*;
+import TaskManager.Controller.Managers;
+import TaskManager.Model.Commons.Status;
+import TaskManager.Model.Commons.Type;
+import TaskManager.Model.Epic;
+import TaskManager.Model.Subtask;
+import TaskManager.Model.Task;
+import TaskManager.Service.HistoryManager;
+import TaskManager.Service.TaskManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TaskManager {
-    protected HashMap<Integer, Task> tasks = new HashMap<Integer, Task>();
-    protected HashMap<Integer, Task> epics = new HashMap<Integer, Task>();
-    protected HashMap<Integer, Task> subtasks = new HashMap<Integer, Task>();
+public class InMemoryTaskManager implements TaskManager {
+    private HashMap<Integer, Task> tasks = new HashMap<Integer, Task>();
+    private HashMap<Integer, Task> epics = new HashMap<Integer, Task>();
+    private HashMap<Integer, Task> subtasks = new HashMap<Integer, Task>();
+    HistoryManager historyManager = Managers.getDefaultHistory();
 
-    private static int idCounter = 1;
+    private int idCounter = 1;
 
     //Получение списка задач по типу
-    public ArrayList<Task> getTasksByType(TaskType type) {
+    @Override
+    public ArrayList<Task> getTasksByType(Type type) {
         ArrayList<Task> result;
 
         switch (type) {
@@ -32,6 +41,7 @@ public class TaskManager {
     }
 
     //Получение списка всех задач
+    @Override
     public ArrayList<Task> getAllTasks() {
         ArrayList<Task> allTasks = new ArrayList<>(tasks.values());
         allTasks.addAll(epics.values());
@@ -42,12 +52,13 @@ public class TaskManager {
 
     //Добавление задачи в менеджер
     // *Подзадача, эпик которой отсутствует в менеджере, не будет добавлена, метод вернет -1
+    @Override
     public int addTask(Task task) {
-        int result =idCounter;
+        int result = idCounter;
         boolean isAdded = true;
 
         task.setId(idCounter);
-        task.setStatus(TaskStatus.NEW);
+        task.setStatus(Status.NEW);
 
         if (task instanceof Epic) {
             epics.put(idCounter, task);
@@ -75,7 +86,8 @@ public class TaskManager {
 
     //Удаление списка задач по типу
     //*При удалении всех эпиков, сразу же удаляются все подзадачи
-    public void deleteTasksByType(TaskType type) {
+    @Override
+    public void deleteTasksByType(Type type) {
         switch (type) {
             case TASK -> tasks.clear();
 
@@ -96,13 +108,15 @@ public class TaskManager {
     }
 
     //Удаление всех задач
+    @Override
     public void deleteAllTasks() {
-        deleteTasksByType(TaskType.TASK);
-        deleteTasksByType(TaskType.EPIC);
+        deleteTasksByType(Type.TASK);
+        deleteTasksByType(Type.EPIC);
     }
 
     //Получение задачи по ID
     //*Если такой задачи нет, то вернет NUll (в будущем необходимо сделать соответствующий exception)
+    @Override
     public Task getTaskById(int id) {
         Task result = null;
 
@@ -116,6 +130,10 @@ public class TaskManager {
             System.out.println("Ошибка: задача " + id + " не найдена");
         }
 
+        if (result != null) {
+            historyManager.add(result);
+        }
+
         return result;
     }
 
@@ -123,6 +141,7 @@ public class TaskManager {
     //*При удалении эпика удаляются все подзадачи
     //*При удалении подзадачи пересчитывается статус Эпика
     //*Необходимо в будущем добавить exception (тот же что и для метода getTaskById)
+    @Override
     public void deleteTaskById(int id) {
         Task task = null;
 
@@ -169,6 +188,7 @@ public class TaskManager {
     //Обновление статуса задачи
     //*Так же проверяем присутствие номера задачи в массиве, тк может быть передан объект из другого менеджера
     //*Необходимо в будущем добавить exception (тот же что и для метода getTaskById)
+    @Override
     public void updateTask(Task task) {
         if (task instanceof Subtask subtask && subtasks.containsKey(task.getId())) {
             subtasks.put(task.getId(), task);
@@ -191,7 +211,7 @@ public class TaskManager {
         int inProgressCount = 0;
         int doneCount = 0;
 
-        if (!epics.containsKey(epicID)){
+        if (!epics.containsKey(epicID)) {
             System.out.println("Ошибка: Данного Эпика нет в менеджере");
         }
 
@@ -202,40 +222,30 @@ public class TaskManager {
         epicSubtasks.clear();
 
         for (Task task : taskArray) {
-            TaskStatus status = task.getStatus();
+            Status status = task.getStatus();
             epicSubtasks.add(task.getId());
 
             switch (status) {
-                case TaskStatus.NEW -> newCount++;
-                case TaskStatus.IN_PROGRESS -> inProgressCount++;
-                case TaskStatus.DONE -> doneCount++;
+                case Status.NEW -> newCount++;
+                case Status.IN_PROGRESS -> inProgressCount++;
+                case Status.DONE -> doneCount++;
             }
         }
 
         if (newCount == taskArray.size()) {
-            epic.setStatus(TaskStatus.NEW);
+            epic.setStatus(Status.NEW);
         } else if (doneCount == taskArray.size()) {
-            epic.setStatus(TaskStatus.DONE);
+            epic.setStatus(Status.DONE);
         } else {
-            epic.setStatus(TaskStatus.IN_PROGRESS);
+            epic.setStatus(Status.IN_PROGRESS);
         }
 
     }
 
-    //Для тестирования клонирование
-    public Task taskClone(Task task) {
-        Task clone;
-
-        if (task instanceof Epic) {
-            clone = new Epic(task.getName(), task.getDescription());
-        } else if (task instanceof Subtask subtask) {
-            clone = new Subtask(subtask.getName(), subtask.getDescription(), subtask.getEpicId());
-        } else {
-            clone = new Task(task.getName(), task.getDescription());
-        }
-
-        clone.setId(task.getId());
-
-        return clone;
+    @Override
+    public void restartCounter() {
+        this.idCounter = 1;
     }
 }
+
+
