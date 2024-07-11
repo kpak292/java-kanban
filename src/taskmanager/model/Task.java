@@ -1,6 +1,6 @@
-package TaskManager.Model;
+package taskmanager.model;
 
-import TaskManager.Model.Commons.Status;
+import taskmanager.model.enums.Status;
 
 import java.util.Objects;
 

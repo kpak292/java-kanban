@@ -1,28 +1,33 @@
-package TaskManager.Service.Implementation;
+package taskmanager.service.implementation;
 
-import TaskManager.Controller.Managers;
-import TaskManager.Model.Commons.Status;
-import TaskManager.Model.Commons.Type;
-import TaskManager.Model.Epic;
-import TaskManager.Model.Subtask;
-import TaskManager.Model.Task;
-import TaskManager.Service.HistoryManager;
-import TaskManager.Service.TaskManager;
+import taskmanager.model.Epic;
+import taskmanager.model.Subtask;
+import taskmanager.model.Task;
+import taskmanager.model.enums.Status;
+import taskmanager.model.enums.Type;
+import taskmanager.service.HistoryManager;
+import taskmanager.service.TaskManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
-    private HashMap<Integer, Task> tasks = new HashMap<Integer, Task>();
-    private HashMap<Integer, Task> epics = new HashMap<Integer, Task>();
-    private HashMap<Integer, Task> subtasks = new HashMap<Integer, Task>();
-    HistoryManager historyManager = Managers.getDefaultHistory();
+    private Map<Integer, Task> tasks = new HashMap<Integer, Task>();
+    private Map<Integer, Task> epics = new HashMap<Integer, Task>();
+    private Map<Integer, Task> subtasks = new HashMap<Integer, Task>();
+    HistoryManager historyManager;
+
+    public InMemoryTaskManager(HistoryManager historyManager){
+        this.historyManager=historyManager;
+    }
 
     private int idCounter = 1;
 
     //Получение списка задач по типу
     @Override
-    public ArrayList<Task> getTasksByType(Type type) {
+    public List<Task> getTasksByType(Type type) {
         ArrayList<Task> result;
 
         switch (type) {
@@ -42,7 +47,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     //Получение списка всех задач
     @Override
-    public ArrayList<Task> getAllTasks() {
+    public List<Task> getAllTasks() {
         ArrayList<Task> allTasks = new ArrayList<>(tasks.values());
         allTasks.addAll(epics.values());
         allTasks.addAll(subtasks.values());
@@ -151,7 +156,7 @@ public class InMemoryTaskManager implements TaskManager {
             task = epics.get(id);
 
             //Удаление всех подзадач привязанных к эпику
-            ArrayList<Task> taskArray = getSubtasksByEpicId(id);
+            List<Task> taskArray = getSubtasksByEpicId(id);
             for (Task taskToDelete : taskArray) {
                 subtasks.remove(taskToDelete.getId());
             }
@@ -171,7 +176,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     //Получение всех подзадач эпика
-    public ArrayList<Task> getSubtasksByEpicId(int epicId) {
+    public List<Task> getSubtasksByEpicId(int epicId) {
         ArrayList<Task> selectedSubtasks = new ArrayList<>();
 
         for (Task task : subtasks.values()) {
@@ -217,8 +222,8 @@ public class InMemoryTaskManager implements TaskManager {
 
         Epic epic = (Epic) epics.get(epicID);
 
-        ArrayList<Task> taskArray = getSubtasksByEpicId(epicID);
-        ArrayList<Integer> epicSubtasks = epic.getSubtaskIds();
+        List<Task> taskArray = getSubtasksByEpicId(epicID);
+        List<Integer> epicSubtasks = epic.getSubtaskIds();
         epicSubtasks.clear();
 
         for (Task task : taskArray) {

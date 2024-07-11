@@ -1,4 +1,4 @@
-package TaskManager.Model;
+package taskmanager.model;
 
 import java.util.Objects;
 

@@ -1,4 +1,4 @@
-package TaskManager.Model.Commons;
+package taskmanager.model.enums;
 
 public enum Type {
     TASK,

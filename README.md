@@ -1,13 +1,13 @@
 # java-kanban
 Repository for homework project.
 ## 1 Классы
-Все классы упакованы в пакет TaskManager
+Все классы упакованы в пакет taskmanager
 - Model - модели данных (Task, Epic, Subtask)
   - Common - Enums (Status,Type)
 - Controller - утилитарный класс Managers
-- Service - Интерфейсы TaskManager,HistoryManager
+- Service - Интерфейсы taskmanager,HistoryManager
   - Implementation - Реализации интерфейсов
-- Autotest - Тестирование
+- autotest - Тестирование
 
 **Task** - Родительский класс задач с параметрами:
 - Название, кратко описывающее суть задачи
@@ -24,9 +24,9 @@ Repository for homework project.
 
 **Subtask** - Подзадача предок задач
 - Подзадача хранит ИД Эпика
-- Подзадача не может быть создана и добавлена в TaskManager, если в нем нет указанного эпика
+- Подзадача не может быть создана и добавлена в taskmanager, если в нем нет указанного эпика
 
-**TaskManager** - Менеджер задач, который управляет всеми задачами
+**taskmanager** - Менеджер задач, который управляет всеми задачами
 - Хранит 3 хештаблицы для каждого из типов
 
 ## 2 Enum
@@ -34,7 +34,7 @@ Repository for homework project.
 
 **TaskType** - Хранит типы задач (Task, Epic, Subtask)
 
-## 3 Методы работы с TaskManager
+## 3 Методы работы с taskmanager
 **getTasksByType** - Принимает в параметрах TaskType, возвращает ArrayList с задачами этого типа.
 
 **getAllTasks** - Возвращает ArrayList со всеми задачами
@@ -48,7 +48,7 @@ Repository for homework project.
 **getTaskById** - Принимает в параметрах ID задачи, возвращает задачу 
 - Если введен идентификатор несуществуществующей задачи, вернется NUll
 
-**addTask** Принимает в параметрах объект TaskManager.Model.Task и присваивает ему ID, метод возвращает ID
+**addTask** Принимает в параметрах объект taskmanager.model.Task и присваивает ему ID, метод возвращает ID
 - если добавляется Подзадача, эпик которой отсутствует в менеджере, не будет добавлена, и будет выведено сообщение
 в консоль и возвращен -1. (Возможно следует бросить исключение в таком случае)
 
@@ -63,5 +63,5 @@ Repository for homework project.
 **getHistory** - Возвращает ArrayList с историей посещения
 
 ## 3 Методы работы с Managers
-**getDefault** - Возвращает экземпляр класса TaskManager
+**getDefault** - Возвращает экземпляр класса taskmanager
 **getDefaultHistory** - Возвращает экземпляр класса HistoryManager

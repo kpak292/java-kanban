@@ -1,17 +1,17 @@
-package TaskManager.Service;
+package taskmanager.service;
 
-import TaskManager.Model.Commons.Type;
-import TaskManager.Model.Task;
+import taskmanager.model.Task;
+import taskmanager.model.enums.Type;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface TaskManager {
 
     //Получение списка задач по типу
-    ArrayList<Task> getTasksByType(Type type);
+    List<Task> getTasksByType(Type type);
 
     //Получение списка всех задач
-    ArrayList<Task> getAllTasks();
+    List<Task> getAllTasks();
 
     //Получение задачи по ID
     //*Если такой задачи нет, то вернет NUll (в будущем необходимо сделать соответствующий exception)

@@ -1,14 +1,12 @@
-package Autotest;
-
-import TaskManager.Controller.Managers;
-import TaskManager.Model.Commons.Status;
-import TaskManager.Model.Commons.Type;
-import TaskManager.Model.Epic;
-import TaskManager.Model.Subtask;
-import TaskManager.Model.Task;
-import TaskManager.Service.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import taskmanager.controller.Managers;
+import taskmanager.model.Epic;
+import taskmanager.model.Subtask;
+import taskmanager.model.Task;
+import taskmanager.model.enums.Status;
+import taskmanager.model.enums.Type;
+import taskmanager.service.TaskManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +19,7 @@ public class ControllerTest {
     @BeforeEach
     public void dataPreparation() {
         manager.restartCounter();
+        manager.deleteAllTasks();
 
         Epic epic1 = new Epic("Epic1", "Description1");
         Epic epic2 = new Epic("Epic2", "Description2");
@@ -53,13 +52,13 @@ public class ControllerTest {
 
     @Test
     public void shouldAssignIdCorrectly() {
-        Task taskNew = new Task("nameNew","desc");
+        Task taskNew = new Task("nameNew", "desc");
         taskNew.setId(100);
 
         manager.addTask(taskNew);
 
         assertNull(manager.getTaskById(100));
-        assertEquals(8,manager.getTaskById(8).getId());
+        assertEquals(8, manager.getTaskById(8).getId());
     }
 
     @Test
@@ -71,13 +70,13 @@ public class ControllerTest {
     }
 
     @Test
-    public void shouldAssignNewStatusAtAdding(){
-        Task task = new Task("a","b");
+    public void shouldAssignNewStatusAtAdding() {
+        Task task = new Task("a", "b");
         task.setStatus(Status.DONE);
 
         int taskid = manager.addTask(task);
 
-        assertEquals(Status.NEW,manager.getTaskById(taskid).getStatus());
+        assertEquals(Status.NEW, manager.getTaskById(taskid).getStatus());
     }
 
     //Retrieve Data

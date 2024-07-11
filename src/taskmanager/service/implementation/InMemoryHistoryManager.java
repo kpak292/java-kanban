@@ -1,20 +1,21 @@
-package TaskManager.Service.Implementation;
+package taskmanager.service.implementation;
 
-import TaskManager.Model.Task;
-import TaskManager.Service.HistoryManager;
+import taskmanager.model.Task;
+import taskmanager.service.HistoryManager;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private final ArrayList<String> history = new ArrayList<>();
+    private final List<String> history = new ArrayList<>();
     private static final int HISTORY_LIMIT = 10;
 
     //Получение истории просмотра тасков
     @Override
-    public ArrayList<String> getHistory() {
-        return history;
+    public List<String> getHistory() {
+        return new ArrayList<>(history);
     }
 
     //Метод добавления данных в историю

@@ -1,4 +1,4 @@
-package TaskManager;
+package taskmanager;
 
 public class Main {
 

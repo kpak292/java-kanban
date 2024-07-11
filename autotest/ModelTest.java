@@ -1,11 +1,9 @@
-package Autotest;
-
-import TaskManager.Model.Commons.Status;
-import TaskManager.Model.Epic;
-import TaskManager.Model.Subtask;
-import TaskManager.Model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import taskmanager.model.Epic;
+import taskmanager.model.Subtask;
+import taskmanager.model.Task;
+import taskmanager.model.enums.Status;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -116,7 +114,7 @@ class ModelTest {
     }
 
     @Test
-    public void shouldNotBeEpicEqualIfDifferentSubtasks(){
+    public void shouldNotBeEpicEqualIfDifferentSubtasks() {
         Epic epic1 = new Epic("name", "description");
         epic1.setId(10);
         epic1.setStatus(Status.NEW);
