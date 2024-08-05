@@ -10,6 +10,7 @@ import taskmanager.service.TaskManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -246,35 +247,19 @@ public class ControllerTest {
     //History Check
     @Test
     public void shouldGetCorrectHistory() {
-        ArrayList<Integer> array = new ArrayList<>();
+        manager.getTaskById(1);
+        manager.getTaskById(2);
+        manager.getTaskById(1);
+        manager.getTaskById(1);
+        Managers.getDefaultHistory().remove(2);
+        manager.getTaskById(2);
+        manager.getTaskById(3);
+        manager.getTaskById(4);
 
-        for (int i = 0; i < 2; i++) {
-            for (int j = 1; j < 8; j++) {
-                array.add(j);
-            }
-        }
-
-        for (int i : array) {
-            manager.getTaskById(i);
-        }
-
-        assertEquals(10, Managers.getDefaultHistory().getHistory().size());
-
-        ArrayList<Integer> expected = new ArrayList<>();
-
-        expected.add(5);
-        expected.add(6);
-        expected.add(7);
-
-        for (int i = 1; i < 8; i++) {
-            expected.add(i);
-        }
-
-        for (int i = 0; i < 10; i++) {
-            String history = Managers.getDefaultHistory().getHistory().get(i);
-            String result = "ID:" + expected.get(i);
-
-            assertTrue(history.matches(".*" + result + ".*"));
+        List<String> log = Managers.getDefaultHistory().getHistory();
+        int expected = 1;
+        for (String entry : log) {
+            assertTrue(entry.matches("ID:" + expected++ + ".*"));
         }
     }
 
