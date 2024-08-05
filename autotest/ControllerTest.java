@@ -40,6 +40,7 @@ public class ControllerTest {
         manager.addTask(subTask1);//5
         manager.addTask(subTask2);//6
         manager.addTask(subTask3);//7
+
     }
 
     //Add Tasks

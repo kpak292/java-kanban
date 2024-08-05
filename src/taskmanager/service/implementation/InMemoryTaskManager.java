@@ -187,6 +187,7 @@ public class InMemoryTaskManager implements TaskManager {
             List<Task> taskArray = getSubtasksByEpicId(id);
             for (Task taskToDelete : taskArray) {
                 subtasks.remove(taskToDelete.getId());
+                historyManager.remove(taskToDelete.getId());
             }
 
             //Удаление самого эпика
@@ -197,6 +198,8 @@ public class InMemoryTaskManager implements TaskManager {
             Subtask subtask = (Subtask) task;
             updateEpicStatus(subtask.getEpicId());
         }
+
+        historyManager.remove(id);
 
         if (task == null) {
             System.out.println("Ошибка: Задача для удаления не найдена");
