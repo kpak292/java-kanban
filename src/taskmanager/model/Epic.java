@@ -16,6 +16,17 @@ public class Epic extends Task {
     }
 
     @Override
+    public Task clone() {
+        Epic clone = new Epic(this.name, this.description);
+        clone.id = this.id;
+        clone.status = this.status;
+
+        clone.subtaskIds.addAll(this.subtaskIds);
+
+        return clone;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

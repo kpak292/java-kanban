@@ -8,8 +8,8 @@ import taskmanager.model.enums.Status;
 import taskmanager.model.enums.Type;
 import taskmanager.service.TaskManager;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,6 +40,7 @@ public class ControllerTest {
         manager.addTask(subTask1);//5
         manager.addTask(subTask2);//6
         manager.addTask(subTask3);//7
+
     }
 
     //Add Tasks
@@ -89,10 +90,40 @@ public class ControllerTest {
     }
 
     @Test
+    public void shouldNotChangeData(){
+        Task task = manager.getTasksByType(Type.TASK).getFirst();
+        task.setDescription("UpdatedDescription");
+        int id = task.getId();
+        assertEquals("Description3",manager.getTaskById(id).getDescription());
+
+        Task subtask = manager.getTasksByType(Type.SUBTASK).getFirst();
+        subtask.setDescription("UpdatedDescription");
+        id = subtask.getId();
+        assertEquals("Description5",manager.getTaskById(id).getDescription());
+
+        Task epic = manager.getTasksByType(Type.EPIC).getFirst();
+        subtask.setDescription("UpdatedDescription");
+        id = epic.getId();
+        assertEquals("Description1",manager.getTaskById(id).getDescription());
+    }
+
+    @Test
     public void shouldRetrieveAllsSubtaskOfEpic() {
         Epic epic = (Epic) manager.getTaskById(2);
 
         assertArrayEquals(Arrays.asList(6, 7).toArray(), epic.getSubtaskIds().toArray());
+    }
+
+    @Test
+    public void shouldNotChangeSubtasksOfEpic() {
+        Epic epic = (Epic) manager.getTaskById(2);
+        assertEquals(2,epic.getSubtaskIds().size());
+
+        epic.getSubtaskIds().add(2);
+        epic.getSubtaskIds().add(3);
+
+        epic = (Epic) manager.getTaskById(2);
+        assertEquals(2,epic.getSubtaskIds().size());
     }
 
     //Delete Data
@@ -153,6 +184,7 @@ public class ControllerTest {
 
         manager.deleteTaskById(6);
 
+        epic = (Epic) manager.getTaskById(2);
         assertEquals(1, epic.getSubtaskIds().size());
     }
 
@@ -228,6 +260,7 @@ public class ControllerTest {
 
         manager.updateTask(subtask);
 
+        updatedTask = (Epic) manager.getTaskById(2);
         assertEquals(Status.IN_PROGRESS, updatedTask.getStatus());
 
         Subtask subtask1 = new Subtask(name, description, 2);
@@ -236,45 +269,31 @@ public class ControllerTest {
 
         manager.updateTask(subtask1);
 
+        updatedTask = (Epic) manager.getTaskById(2);
         assertEquals(Status.DONE, updatedTask.getStatus());
 
         manager.deleteTasksByType(Type.SUBTASK);
 
+        updatedTask = (Epic) manager.getTaskById(2);
         assertEquals(Status.NEW, updatedTask.getStatus());
     }
 
     //History Check
     @Test
     public void shouldGetCorrectHistory() {
-        ArrayList<Integer> array = new ArrayList<>();
+        manager.getTaskById(1);
+        manager.getTaskById(2);
+        manager.getTaskById(1);
+        manager.getTaskById(1);
+        Managers.getDefaultHistory().remove(2);
+        manager.getTaskById(2);
+        manager.getTaskById(3);
+        manager.getTaskById(4);
 
-        for (int i = 0; i < 2; i++) {
-            for (int j = 1; j < 8; j++) {
-                array.add(j);
-            }
-        }
-
-        for (int i : array) {
-            manager.getTaskById(i);
-        }
-
-        assertEquals(10, Managers.getDefaultHistory().getHistory().size());
-
-        ArrayList<Integer> expected = new ArrayList<>();
-
-        expected.add(5);
-        expected.add(6);
-        expected.add(7);
-
-        for (int i = 1; i < 8; i++) {
-            expected.add(i);
-        }
-
-        for (int i = 0; i < 10; i++) {
-            String history = Managers.getDefaultHistory().getHistory().get(i);
-            String result = "ID:" + expected.get(i);
-
-            assertTrue(history.matches(".*" + result + ".*"));
+        List<String> log = Managers.getDefaultHistory().getHistory();
+        int expected = 1;
+        for (String entry : log) {
+            assertTrue(entry.matches("ID:" + expected++ + ".*"));
         }
     }
 
