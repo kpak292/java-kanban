@@ -17,6 +17,15 @@ public class Subtask extends Task {
     }
 
     @Override
+    public Task clone() {
+        Subtask clone = new Subtask(this.name, this.description, this.epicId);
+        clone.id = this.id;
+        clone.status = this.status;
+
+        return clone;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

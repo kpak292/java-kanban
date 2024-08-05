@@ -19,8 +19,8 @@ public class InMemoryTaskManager implements TaskManager {
     private Map<Integer, Task> subtasks = new HashMap<Integer, Task>();
     HistoryManager historyManager;
 
-    public InMemoryTaskManager(HistoryManager historyManager){
-        this.historyManager=historyManager;
+    public InMemoryTaskManager(HistoryManager historyManager) {
+        this.historyManager = historyManager;
     }
 
     private int idCounter = 1;
@@ -28,18 +28,23 @@ public class InMemoryTaskManager implements TaskManager {
     //Получение списка задач по типу
     @Override
     public List<Task> getTasksByType(Type type) {
-        ArrayList<Task> result;
+        List<Task> result = new ArrayList<>();
+        List<Task> source;
 
         switch (type) {
             case EPIC -> {
-                result = new ArrayList<>(epics.values());
+                source = new ArrayList<>(epics.values());
             }
             case SUBTASK -> {
-                result = new ArrayList<>(subtasks.values());
+                source = new ArrayList<>(subtasks.values());
             }
             default -> {
-                result = new ArrayList<>(tasks.values());
+                source = new ArrayList<>(tasks.values());
             }
+        }
+
+        for (Task task : source) {
+            result.add(task.clone());
         }
 
         return result;
@@ -48,11 +53,17 @@ public class InMemoryTaskManager implements TaskManager {
     //Получение списка всех задач
     @Override
     public List<Task> getAllTasks() {
-        ArrayList<Task> allTasks = new ArrayList<>(tasks.values());
+        List<Task> allTasks = new ArrayList<>(tasks.values());
         allTasks.addAll(epics.values());
         allTasks.addAll(subtasks.values());
 
-        return allTasks;
+        List<Task> result = new ArrayList<>();
+
+        for (Task task : allTasks) {
+            result.add(task.clone());
+        }
+
+        return result;
     }
 
     //Добавление задачи в менеджер
@@ -94,14 +105,31 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTasksByType(Type type) {
         switch (type) {
-            case TASK -> tasks.clear();
+            case TASK -> {
+                for (Task task : tasks.values()) {
+                    historyManager.remove(task.getId());
+                }
+
+                tasks.clear();
+            }
 
             case EPIC -> {
+                for (Task task : epics.values()) {
+                    historyManager.remove(task.getId());
+                }
+
+                for (Task task : subtasks.values()) {
+                    historyManager.remove(task.getId());
+                }
+
                 epics.clear();
                 subtasks.clear();
             }
-
             case SUBTASK -> {
+                for (Task task : subtasks.values()) {
+                    historyManager.remove(task.getId());
+                }
+
                 subtasks.clear();
 
                 //Обновление статусов всех эпиков
@@ -126,11 +154,11 @@ public class InMemoryTaskManager implements TaskManager {
         Task result = null;
 
         if (tasks.containsKey(id)) {
-            result = tasks.get(id);
+            result = tasks.get(id).clone();
         } else if (epics.containsKey(id)) {
-            result = epics.get(id);
+            result = epics.get(id).clone();
         } else if (subtasks.containsKey(id)) {
-            result = subtasks.get(id);
+            result = subtasks.get(id).clone();
         } else {
             System.out.println("Ошибка: задача " + id + " не найдена");
         }
@@ -177,13 +205,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     //Получение всех подзадач эпика
     public List<Task> getSubtasksByEpicId(int epicId) {
-        ArrayList<Task> selectedSubtasks = new ArrayList<>();
+        List<Task> selectedSubtasks = new ArrayList<>();
 
         for (Task task : subtasks.values()) {
             Subtask subtask = (Subtask) task;
 
             if (subtask.getEpicId() == epicId) {
-                selectedSubtasks.add(subtask);
+                selectedSubtasks.add(subtask.clone());
             }
         }
 
