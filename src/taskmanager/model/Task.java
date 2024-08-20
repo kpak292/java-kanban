@@ -87,11 +87,11 @@ public class Task {
         return builder.toString();
     }
 
-    protected String transform (String text){
+    protected String transform(String text) {
         return "\"" + text + "\"";
     }
 
-    protected String transform (int text){
+    protected String transform(int text) {
         return "\"" + text + "\"";
     }
 

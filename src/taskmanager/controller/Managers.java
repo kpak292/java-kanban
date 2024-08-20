@@ -2,27 +2,36 @@ package taskmanager.controller;
 
 import taskmanager.service.HistoryManager;
 import taskmanager.service.TaskManager;
+import taskmanager.service.implementation.FileBackedTaskManager;
 import taskmanager.service.implementation.InMemoryHistoryManager;
 import taskmanager.service.implementation.InMemoryTaskManager;
 
 public class Managers {
-    private static InMemoryTaskManager inMemoryTaskManager;
-    private static InMemoryHistoryManager inMemoryHistoryManager;
+    private static TaskManager taskManager;
+    private static HistoryManager historyManager;
 
 
     public static TaskManager getDefault() {
-        if (inMemoryTaskManager == null) {
-            inMemoryTaskManager = new InMemoryTaskManager(getDefaultHistory());
+        if (taskManager == null) {
+            taskManager = new InMemoryTaskManager(getDefaultHistory());
         }
 
-        return inMemoryTaskManager;
+        return taskManager;
     }
 
     public static HistoryManager getDefaultHistory() {
-        if (inMemoryHistoryManager == null) {
-            inMemoryHistoryManager = new InMemoryHistoryManager();
+        if (historyManager == null) {
+            historyManager = new InMemoryHistoryManager();
         }
 
-        return inMemoryHistoryManager;
+        return historyManager;
+    }
+
+    public static TaskManager getFileBacked() {
+        if (taskManager == null) {
+            taskManager = new FileBackedTaskManager();
+        }
+
+        return taskManager;
     }
 }

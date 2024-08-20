@@ -7,6 +7,7 @@ import taskmanager.model.Epic;
 import taskmanager.model.Subtask;
 import taskmanager.model.Task;
 import taskmanager.model.enums.Status;
+import taskmanager.model.enums.Type;
 import taskmanager.service.HistoryManager;
 
 import java.io.*;
@@ -31,7 +32,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public FileBackedTaskManager(Path path) throws ManagerLoadException {
         super(Managers.getDefaultHistory());
 
+        if (!Files.exists(path)) {
+            throw new ManagerLoadException("Error: file is not exists");
+        }
+
         this.path = path;
+
         load();
     }
 
@@ -46,6 +52,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         if (!Files.exists(path)) {
             try {
                 Files.createFile(path);
+                save();
             } catch (IOException e) {
                 throw new ManagerLoadException("Error: can't create file " + path.toString());
             }
@@ -89,7 +96,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
             this.idCounter = counter;
 
-            while (reader.ready()){
+            while (reader.ready()) {
                 stringToTask(reader.readLine());
             }
 
@@ -158,4 +165,34 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return status;
     }
 
+    @Override
+    public int addTask(Task task) {
+        int result = super.addTask(task);
+        save();
+        return result;
+    }
+
+    @Override
+    public void deleteTasksByType(Type type) {
+        super.deleteTasksByType(type);
+        save();
+    }
+
+    @Override
+    public void deleteAllTasks() {
+        super.deleteAllTasks();
+        save();
+    }
+
+    @Override
+    public void deleteTaskById(int id) {
+        super.deleteTaskById(id);
+        save();
+    }
+
+    @Override
+    public void updateTask(Task task) {
+        super.updateTask(task);
+        save();
+    }
 }
