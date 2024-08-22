@@ -82,6 +82,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
             String header = reader.readLine();
 
+            if (header==null){
+                return;
+            }
+
             if (!header.matches(this.header + ".*")) {
                 throw new ManagerLoadException("Error: data format isn't consistent");
             }
@@ -91,7 +95,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
             header = header.replace(this.header, "")
                     .replaceAll("\"", "");
-            System.out.println(header);
+
             int counter = Integer.parseInt(header);
 
             this.idCounter = counter;
