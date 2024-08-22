@@ -82,7 +82,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try (BufferedReader reader = new BufferedReader(new FileReader(path.toFile()))) {
             String header = reader.readLine();
 
-            if (header==null){
+            if (header == null) {
                 return;
             }
 
