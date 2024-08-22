@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    Path path;
+    private final Path path;
     private String header = "\"ID\";\"Type\";\"Name\";\"Description\";\"Status\";\"Subtasks\";\"EpicID\";";
 
     public FileBackedTaskManager() throws ManagerLoadException {
@@ -167,6 +167,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public int addTask(Task task) {
+        if (task == null) {
+            return -1;
+        }
+
         int result = super.addTask(task);
         save();
         return result;
@@ -192,6 +196,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void updateTask(Task task) {
+        if (task == null) {
+            return;
+        }
+
         super.updateTask(task);
         save();
     }
