@@ -41,12 +41,20 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "Model.Subtask{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", status=" + status +
-                '}';
+        StringBuilder builder = new StringBuilder();
+        builder.append(transform(id))
+                .append(";")
+                .append(transform("Subtask"))
+                .append(";")
+                .append(transform(name))
+                .append(";")
+                .append(transform(description))
+                .append(";")
+                .append(transform(status.toString()))
+                .append(";")
+                .append(";")
+                .append(transform(epicId));
+        return builder.toString();
     }
 
 }

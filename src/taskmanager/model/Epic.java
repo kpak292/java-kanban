@@ -1,6 +1,7 @@
 package taskmanager.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,11 +43,19 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "Model.Epic{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", status=" + status +
-                '}';
+        StringBuilder builder = new StringBuilder();
+        builder.append(transform(id))
+                .append(";")
+                .append(transform("Epic"))
+                .append(";")
+                .append(transform(name))
+                .append(";")
+                .append(transform(description))
+                .append(";")
+                .append(transform(status.toString()))
+                .append(";")
+                .append(transform(Arrays.toString(subtaskIds.toArray())))
+                .append(";");
+        return builder.toString();
     }
 }

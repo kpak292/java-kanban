@@ -72,12 +72,27 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Model.Task{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", status=" + status +
-                '}';
+        StringBuilder builder = new StringBuilder();
+        builder.append(transform(id))
+                .append(";")
+                .append(transform("Task"))
+                .append(";")
+                .append(transform(name))
+                .append(";")
+                .append(transform(description))
+                .append(";")
+                .append(transform(status.toString()))
+                .append(";")
+                .append(";");
+        return builder.toString();
+    }
+
+    protected String transform(String text) {
+        return "\"" + text + "\"";
+    }
+
+    protected String transform(int text) {
+        return "\"" + text + "\"";
     }
 
 }
