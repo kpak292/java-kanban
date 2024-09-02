@@ -1,11 +1,16 @@
 package taskmanager;
 
 
+import taskmanager.controller.Managers;
 import taskmanager.model.Epic;
 import taskmanager.model.Subtask;
 import taskmanager.model.Task;
+import taskmanager.service.TaskManager;
 import taskmanager.service.implementation.FileBackedTaskManager;
+import taskmanager.service.implementation.InMemoryTaskManager;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,31 +18,22 @@ public class Main {
 
 
     public static void main(String[] args) throws Exception {
-        FileBackedTaskManager manager = new FileBackedTaskManager();
 
-        Epic epic1 = new Epic("Epic1", "Description1");
-        Epic epic2 = new Epic("Epic2", "Description2");
-
-        manager.addTask(epic1);//1
-        manager.addTask(epic2);//2
+        TaskManager manager = Managers.getDefault();
 
         Task task1 = new Task("Task1", "Description3");
-        Task task2 = new Task("Task2", "Description4");
 
-        manager.addTask(task1);//3
-        manager.addTask(task2);//4
+        task1.setStartTime(LocalDateTime.of(2024,1,20,13,10,10));
 
-        Subtask subTask1 = new Subtask("Subtask1", "Description5", epic1.getId());
-        Subtask subTask2 = new Subtask("Subtask2", "Description6", epic2.getId());
-        Subtask subTask3 = new Subtask("Subtask3", "Description7", epic2.getId());
+        task1.setDuration(Duration.ofMinutes(100));
 
-        manager.addTask(subTask1);//5
-        manager.addTask(subTask2);//6
-        manager.addTask(subTask3);//7
+        System.out.println(task1.getStartTime());
+        System.out.println(task1.getDuration());
+        System.out.println(task1.getEndTime());
 
+        manager.addTask(task1);
 
-
-
+        System.out.println(manager.getAllTasks().getFirst());
 
     }
 }

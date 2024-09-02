@@ -46,7 +46,7 @@ public class Epic extends Task {
         StringBuilder builder = new StringBuilder();
         builder.append(transform(id))
                 .append(";")
-                .append(transform("Task"))
+                .append(transform("Epic"))
                 .append(";")
                 .append(transform(name))
                 .append(";")

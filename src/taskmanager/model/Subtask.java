@@ -44,7 +44,7 @@ public class Subtask extends Task {
         StringBuilder builder = new StringBuilder();
         builder.append(transform(id))
                 .append(";")
-                .append(transform("Task"))
+                .append(transform("Subtask"))
                 .append(";")
                 .append(transform(name))
                 .append(";")

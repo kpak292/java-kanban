@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,12 +43,27 @@ public class IOTest {
         Task task1 = new Task("Task1", "Description3");
         Task task2 = new Task("Task2", "Description4");
 
+        task1.setStartTime(LocalDateTime.of(2024,1,20,13,10,10));
+        task2.setStartTime(LocalDateTime.of(2024,2,20,13,10,10));
+
+        task1.setDuration(Duration.ofMinutes(100));
+        task2.setDuration(Duration.ofMinutes(200));
+
         manager.addTask(task1);//3
         manager.addTask(task2);//4
 
         Subtask subTask1 = new Subtask("Subtask1", "Description5", epic1.getId());
         Subtask subTask2 = new Subtask("Subtask2", "Description6", epic2.getId());
         Subtask subTask3 = new Subtask("Subtask3", "Description7", epic2.getId());
+
+        subTask1.setStartTime(LocalDateTime.of(2024,5,20,13,10,10));
+        subTask1.setDuration(Duration.ofMinutes(150));
+
+        subTask2.setStartTime(LocalDateTime.of(2024,6,20,13,10,10));
+        subTask2.setDuration(Duration.ofMinutes(150));
+
+        subTask3.setStartTime(LocalDateTime.of(2024,7,20,13,10,10));
+        subTask3.setDuration(Duration.ofMinutes(150));
 
         manager.addTask(subTask1);//5
         manager.addTask(subTask2);//6
@@ -117,7 +134,7 @@ public class IOTest {
             data.add(reader.readLine());
         }
 
-        String result = "\"3\";\"Task\";\"Task1\";\"Description3\";\"DONE\";;\"0\";;;";
+        String result = "\"3\";\"Task\";\"Task1\";\"Description3\";\"DONE\";\"20.01.2024 13:10\";\"100\";\"20.01.2024 14:50\";;";
 
         assertTrue(data.contains(result));
 

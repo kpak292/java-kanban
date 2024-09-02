@@ -79,6 +79,8 @@ public class Task {
         Task clone = new Task(this.name, this.description);
         clone.setId(this.id);
         clone.setStatus(this.status);
+        clone.setStartTime(this.startTime);
+        clone.setDuration(Duration.ofMinutes(this.duration));
 
         return clone;
     }
