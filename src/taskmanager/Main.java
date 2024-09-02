@@ -6,6 +6,9 @@ import taskmanager.model.Subtask;
 import taskmanager.model.Task;
 import taskmanager.service.implementation.FileBackedTaskManager;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class Main {
 
 
@@ -31,6 +34,9 @@ public class Main {
         manager.addTask(subTask1);//5
         manager.addTask(subTask2);//6
         manager.addTask(subTask3);//7
+
+
+
 
 
     }

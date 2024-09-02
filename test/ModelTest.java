@@ -5,6 +5,9 @@ import taskmanager.model.Subtask;
 import taskmanager.model.Task;
 import taskmanager.model.enums.Status;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ModelTest {
@@ -140,6 +143,17 @@ class ModelTest {
         subtask1.setStatus(Status.IN_PROGRESS);
 
         assertNotEquals(subtask1, subtask);
+    }
+
+    @Test
+    public void shouldCorrectlyCalculateTime(){
+        LocalDateTime start = LocalDateTime.of(2024,1,15,12,0);
+        Duration duration = Duration.ofDays(1).plusHours(1).plusMinutes(5);
+
+        task.setStartTime(start);
+        task.setDuration(duration);
+
+        assertEquals(start.plus(duration),task.getEndTime());
     }
 
 }

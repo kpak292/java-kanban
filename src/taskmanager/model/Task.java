@@ -2,6 +2,8 @@ package taskmanager.model;
 
 import taskmanager.model.enums.Status;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 //Основной класс задач,
@@ -10,6 +12,8 @@ public class Task {
     protected String name;
     protected String description;
     protected Status status = Status.NEW;
+    protected LocalDateTime startTime;
+    protected Duration duration;
 
     public Task(String name, String description) {
         this.name = name;
@@ -46,6 +50,26 @@ public class Task {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getEndTime(){
+        return startTime.plus(duration);
     }
 
     public Task clone() {
