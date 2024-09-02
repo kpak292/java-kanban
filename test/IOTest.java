@@ -117,7 +117,7 @@ public class IOTest {
             data.add(reader.readLine());
         }
 
-        String result = "\"3\";\"Task\";\"Task1\";\"Description3\";\"DONE\";;";
+        String result = "\"3\";\"Task\";\"Task1\";\"Description3\";\"DONE\";;\"0\";;;";
 
         assertTrue(data.contains(result));
 

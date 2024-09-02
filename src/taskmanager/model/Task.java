@@ -4,6 +4,7 @@ import taskmanager.model.enums.Status;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 //Основной класс задач,
@@ -13,7 +14,9 @@ public class Task {
     protected String description;
     protected Status status = Status.NEW;
     protected LocalDateTime startTime;
-    protected Duration duration;
+    protected long duration = 0;
+
+    public static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     public Task(String name, String description) {
         this.name = name;
@@ -61,15 +64,15 @@ public class Task {
     }
 
     public Duration getDuration() {
-        return duration;
+        return Duration.ofMinutes(duration);
     }
 
     public void setDuration(Duration duration) {
-        this.duration = duration;
+        this.duration = duration.toMinutes();
     }
 
-    public LocalDateTime getEndTime(){
-        return startTime.plus(duration);
+    public LocalDateTime getEndTime() {
+        return startTime == null ? null : startTime.plus(getDuration());
     }
 
     public Task clone() {
@@ -107,6 +110,12 @@ public class Task {
                 .append(";")
                 .append(transform(status.toString()))
                 .append(";")
+                .append(startTime == null ? "" : transform(startTime.format(formatter)))
+                .append(";")
+                .append(transform(duration))
+                .append(";")
+                .append(getEndTime() == null ? "" : transform(getEndTime().format(formatter)))
+                .append(";")
                 .append(";");
         return builder.toString();
     }
@@ -116,6 +125,10 @@ public class Task {
     }
 
     protected String transform(int text) {
+        return "\"" + text + "\"";
+    }
+
+    protected String transform(long text) {
         return "\"" + text + "\"";
     }
 

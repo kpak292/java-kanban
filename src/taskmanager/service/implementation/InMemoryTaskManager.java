@@ -17,6 +17,8 @@ public class InMemoryTaskManager implements TaskManager {
     protected Map<Integer, Task> tasks = new HashMap<Integer, Task>();
     protected Map<Integer, Task> epics = new HashMap<Integer, Task>();
     protected Map<Integer, Task> subtasks = new HashMap<Integer, Task>();
+
+
     HistoryManager historyManager;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
