@@ -146,14 +146,14 @@ class ModelTest {
     }
 
     @Test
-    public void shouldCorrectlyCalculateTime(){
-        LocalDateTime start = LocalDateTime.of(2024,1,15,12,0);
+    public void shouldCorrectlyCalculateTime() {
+        LocalDateTime start = LocalDateTime.of(2024, 1, 15, 12, 0);
         Duration duration = Duration.ofDays(1).plusHours(1).plusMinutes(5);
 
         task.setStartTime(start);
         task.setDuration(duration);
 
-        assertEquals(start.plus(duration),task.getEndTime());
+        assertEquals(start.plus(duration), task.getEndTime());
     }
 
 }

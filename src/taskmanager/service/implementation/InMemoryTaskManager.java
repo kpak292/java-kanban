@@ -323,6 +323,7 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
 
+
         if (!sortedList.stream()
                 .filter(innerTask -> innerTask.getId() != task.getId())
                 .anyMatch(innerTask -> isOverlapping(innerTask, task))) {
