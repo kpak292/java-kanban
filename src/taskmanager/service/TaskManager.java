@@ -41,4 +41,7 @@ public interface TaskManager {
 
     //Обнуление счетчика задач
     void restartCounter();
+
+    //Получение приоритетных задач
+    List<Task> getPrioritizedTasks();
 }

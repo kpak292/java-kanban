@@ -8,6 +8,8 @@ import taskmanager.model.enums.Status;
 import taskmanager.model.enums.Type;
 import taskmanager.service.TaskManager;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,6 +32,15 @@ public class ControllerTest {
         Task task1 = new Task("Task1", "Description3");
         Task task2 = new Task("Task2", "Description4");
 
+        LocalDateTime start1 = LocalDateTime.of(2024, 1, 1, 9, 00);
+        Duration duration = Duration.ofMinutes(90);
+
+        task1.setStartTime(start1);
+        task1.setDuration(duration);
+
+        task2.setStartTime(start1.plusHours(2));
+        task2.setDuration(duration);
+
         manager.addTask(task1);//3
         manager.addTask(task2);//4
 
@@ -37,10 +48,18 @@ public class ControllerTest {
         Subtask subTask2 = new Subtask("Subtask2", "Description6", epic2.getId());
         Subtask subTask3 = new Subtask("Subtask3", "Description7", epic2.getId());
 
+        subTask1.setStartTime(start1.plusHours(4));
+        subTask1.setDuration(duration);
+
+        subTask2.setStartTime(start1.plusHours(6));
+        subTask2.setDuration(duration);
+
+        subTask3.setStartTime(start1.plusHours(8));
+        subTask3.setDuration(duration);
+
         manager.addTask(subTask1);//5
         manager.addTask(subTask2);//6
         manager.addTask(subTask3);//7
-
     }
 
     //Add Tasks
@@ -90,21 +109,21 @@ public class ControllerTest {
     }
 
     @Test
-    public void shouldNotChangeData(){
+    public void shouldNotChangeData() {
         Task task = manager.getTasksByType(Type.TASK).getFirst();
         task.setDescription("UpdatedDescription");
         int id = task.getId();
-        assertEquals("Description3",manager.getTaskById(id).getDescription());
+        assertEquals("Description3", manager.getTaskById(id).getDescription());
 
         Task subtask = manager.getTasksByType(Type.SUBTASK).getFirst();
         subtask.setDescription("UpdatedDescription");
         id = subtask.getId();
-        assertEquals("Description5",manager.getTaskById(id).getDescription());
+        assertEquals("Description5", manager.getTaskById(id).getDescription());
 
         Task epic = manager.getTasksByType(Type.EPIC).getFirst();
         subtask.setDescription("UpdatedDescription");
         id = epic.getId();
-        assertEquals("Description1",manager.getTaskById(id).getDescription());
+        assertEquals("Description1", manager.getTaskById(id).getDescription());
     }
 
     @Test
@@ -117,13 +136,13 @@ public class ControllerTest {
     @Test
     public void shouldNotChangeSubtasksOfEpic() {
         Epic epic = (Epic) manager.getTaskById(2);
-        assertEquals(2,epic.getSubtaskIds().size());
+        assertEquals(2, epic.getSubtaskIds().size());
 
         epic.getSubtaskIds().add(2);
         epic.getSubtaskIds().add(3);
 
         epic = (Epic) manager.getTaskById(2);
-        assertEquals(2,epic.getSubtaskIds().size());
+        assertEquals(2, epic.getSubtaskIds().size());
     }
 
     //Delete Data
@@ -295,6 +314,90 @@ public class ControllerTest {
         for (String entry : log) {
             assertTrue(entry.matches("ID:" + expected++ + ".*"));
         }
+    }
+
+    @Test
+    public void shouldRefuseToAddOverlappingTask() {
+        int tasks = manager.getAllTasks().size();
+        Task overlap = new Task("Overlap", "Description");
+
+        LocalDateTime start = LocalDateTime.of(2024, 1, 1, 10, 31);
+        Duration duration = Duration.ofMinutes(60);
+
+        overlap.setStartTime(start);
+        overlap.setDuration(duration);
+
+        assertTrue(manager.addTask(overlap) < 0);
+        assertEquals(tasks, manager.getAllTasks().size());
+    }
+
+    @Test
+    public void shouldNotAddTasksInPrioritizedList() {
+        int amountOfPrioritized = manager.getPrioritizedTasks().size();
+        int amountOfTotal = manager.getAllTasks().size();
+
+        Task task = new Task("Test", "Test0");
+
+        manager.addTask(task);
+
+        assertTrue(manager.getAllTasks().size() - amountOfTotal == 1);
+        assertTrue(manager.getPrioritizedTasks().size() == amountOfPrioritized);
+    }
+
+    @Test
+    public void shouldDeleteTaskIfDeletedStartDate() {
+        int amountOfPrioritized = manager.getPrioritizedTasks().size();
+        int amountOfTotal = manager.getAllTasks().size();
+
+        Task task = manager.getTaskById(3);
+        task.setStartTime(null);
+
+        manager.updateTask(task);
+
+        assertTrue(manager.getAllTasks().size() == amountOfTotal);
+        assertTrue(manager.getPrioritizedTasks().size() < amountOfPrioritized);
+    }
+
+    @Test
+    public void shouldCorrectlyReturnPrioritizedList() {
+        Task task1 = new Task("Test", "Test");
+
+        LocalDateTime start = LocalDateTime.of(2024, 1, 1, 10, 40);
+        Duration duration = Duration.ofMinutes(10);
+
+        task1.setStartTime(start);
+        task1.setDuration(duration);
+
+        int id = manager.addTask(task1);//3
+
+        List<Task> prioritized = manager.getPrioritizedTasks();
+
+        assertTrue(prioritized.get(1).getId() == id);
+    }
+
+    @Test
+    public void shouldCorrectlyCaculateEpicStartandDuration() {
+        assertEquals(manager.getTaskById(1).getStartTime(), manager.getTaskById(5).getStartTime());
+        assertEquals(manager.getTaskById(1).getDuration(), manager.getTaskById(5).getDuration());
+
+        LocalDateTime start = LocalDateTime.of(2024, 1, 1, 9, 00);
+        Duration duration = Duration.ofMinutes(90);
+
+        Subtask subTaskEarly = new Subtask("Subtask", "Early", 1);
+        subTaskEarly.setStartTime(start.minusHours(2));
+        subTaskEarly.setDuration(duration);
+
+        int earlySubtaskId = manager.addTask(subTaskEarly);
+
+        assertEquals(manager.getTaskById(1).getStartTime(), manager.getTaskById(earlySubtaskId).getStartTime());
+
+        Subtask subTaskLater = new Subtask("Subtask", "Later", 1);
+        subTaskLater.setStartTime(start.plusHours(10));
+        subTaskLater.setDuration(duration);
+
+        int laterSubtaskId = manager.addTask(subTaskLater);
+
+        assertEquals(manager.getTaskById(1).getEndTime(), manager.getTaskById(laterSubtaskId).getEndTime());
     }
 
 }
