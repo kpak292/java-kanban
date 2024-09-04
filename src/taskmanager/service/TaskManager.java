@@ -4,6 +4,7 @@ import taskmanager.model.Task;
 import taskmanager.model.enums.Type;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TaskManager {
 
@@ -15,7 +16,7 @@ public interface TaskManager {
 
     //Получение задачи по ID
     //*Если такой задачи нет, то вернет NUll (в будущем необходимо сделать соответствующий exception)
-    Task getTaskById(int id);
+    Optional<Task> getTaskById(int id);
 
     //Добавление задачи в менеджер
     // *Подзадача, эпик которой отсутствует в менеджере, не будет добавлена, метод вернет -1

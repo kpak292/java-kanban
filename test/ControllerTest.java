@@ -77,8 +77,8 @@ public class ControllerTest {
 
         manager.addTask(taskNew);
 
-        assertNull(manager.getTaskById(100));
-        assertEquals(8, manager.getTaskById(8).getId());
+        assertTrue(manager.getTaskById(100).isEmpty());
+        assertEquals(8, manager.getTaskById(8).get().getId());
     }
 
     @Test
@@ -86,7 +86,7 @@ public class ControllerTest {
         Task task = new Task("Task2", "Description4");
         task.setId(4);
 
-        assertEquals(manager.getTaskById(4), task);
+        assertEquals(manager.getTaskById(4).get(), task);
     }
 
     @Test
@@ -96,7 +96,7 @@ public class ControllerTest {
 
         int taskid = manager.addTask(task);
 
-        assertEquals(Status.NEW, manager.getTaskById(taskid).getStatus());
+        assertEquals(Status.NEW, manager.getTaskById(taskid).get().getStatus());
     }
 
     //Retrieve Data
@@ -113,35 +113,35 @@ public class ControllerTest {
         Task task = manager.getTasksByType(Type.TASK).getFirst();
         task.setDescription("UpdatedDescription");
         int id = task.getId();
-        assertEquals("Description3", manager.getTaskById(id).getDescription());
+        assertEquals("Description3", manager.getTaskById(id).get().getDescription());
 
         Task subtask = manager.getTasksByType(Type.SUBTASK).getFirst();
         subtask.setDescription("UpdatedDescription");
         id = subtask.getId();
-        assertEquals("Description5", manager.getTaskById(id).getDescription());
+        assertEquals("Description5", manager.getTaskById(id).get().getDescription());
 
         Task epic = manager.getTasksByType(Type.EPIC).getFirst();
         subtask.setDescription("UpdatedDescription");
         id = epic.getId();
-        assertEquals("Description1", manager.getTaskById(id).getDescription());
+        assertEquals("Description1", manager.getTaskById(id).get().getDescription());
     }
 
     @Test
     public void shouldRetrieveAllsSubtaskOfEpic() {
-        Epic epic = (Epic) manager.getTaskById(2);
+        Epic epic = (Epic) manager.getTaskById(2).get();
 
         assertArrayEquals(Arrays.asList(6, 7).toArray(), epic.getSubtaskIds().toArray());
     }
 
     @Test
     public void shouldNotChangeSubtasksOfEpic() {
-        Epic epic = (Epic) manager.getTaskById(2);
+        Epic epic = (Epic) manager.getTaskById(2).get();
         assertEquals(2, epic.getSubtaskIds().size());
 
         epic.getSubtaskIds().add(2);
         epic.getSubtaskIds().add(3);
 
-        epic = (Epic) manager.getTaskById(2);
+        epic = (Epic) manager.getTaskById(2).get();
         assertEquals(2, epic.getSubtaskIds().size());
     }
 
@@ -183,7 +183,7 @@ public class ControllerTest {
 
         manager.deleteTaskById(2);
 
-        assertNull(manager.getTaskById(2));
+        assertTrue(manager.getTaskById(2).isEmpty());
     }
 
     @Test
@@ -197,13 +197,13 @@ public class ControllerTest {
 
     @Test
     public void shouldDeleteSubtaskAndEpicInternalLink() {
-        Epic epic = (Epic) manager.getTaskById(2);
+        Epic epic = (Epic) manager.getTaskById(2).get();
 
         assertEquals(2, epic.getSubtaskIds().size());
 
         manager.deleteTaskById(6);
 
-        epic = (Epic) manager.getTaskById(2);
+        epic = (Epic) manager.getTaskById(2).get();
         assertEquals(1, epic.getSubtaskIds().size());
     }
 
@@ -229,7 +229,7 @@ public class ControllerTest {
 
         manager.updateTask(task);
 
-        Task updatedTask = manager.getTaskById(3);
+        Task updatedTask = manager.getTaskById(3).get();
 
         assertEquals(name, updatedTask.getName());
         assertEquals(description, updatedTask.getDescription());
@@ -248,7 +248,7 @@ public class ControllerTest {
 
         manager.updateTask(task);
 
-        Subtask updatedTask = (Subtask) manager.getTaskById(5);
+        Subtask updatedTask = (Subtask) manager.getTaskById(5).get();
 
         assertEquals(name, updatedTask.getName());
         assertEquals(description, updatedTask.getDescription());
@@ -267,7 +267,7 @@ public class ControllerTest {
 
         manager.updateTask(task);
 
-        Epic updatedTask = (Epic) manager.getTaskById(2);
+        Epic updatedTask = (Epic) manager.getTaskById(2).get();
 
         assertEquals(name, updatedTask.getName());
         assertEquals(description, updatedTask.getDescription());
@@ -279,7 +279,7 @@ public class ControllerTest {
 
         manager.updateTask(subtask);
 
-        updatedTask = (Epic) manager.getTaskById(2);
+        updatedTask = (Epic) manager.getTaskById(2).get();
         assertEquals(Status.IN_PROGRESS, updatedTask.getStatus());
 
         Subtask subtask1 = new Subtask(name, description, 2);
@@ -288,12 +288,12 @@ public class ControllerTest {
 
         manager.updateTask(subtask1);
 
-        updatedTask = (Epic) manager.getTaskById(2);
+        updatedTask = (Epic) manager.getTaskById(2).get();
         assertEquals(Status.DONE, updatedTask.getStatus());
 
         manager.deleteTasksByType(Type.SUBTASK);
 
-        updatedTask = (Epic) manager.getTaskById(2);
+        updatedTask = (Epic) manager.getTaskById(2).get();
         assertEquals(Status.NEW, updatedTask.getStatus());
     }
 
@@ -349,7 +349,7 @@ public class ControllerTest {
         int amountOfPrioritized = manager.getPrioritizedTasks().size();
         int amountOfTotal = manager.getAllTasks().size();
 
-        Task task = manager.getTaskById(3);
+        Task task = manager.getTaskById(3).get();
         task.setStartTime(null);
 
         manager.updateTask(task);
@@ -377,8 +377,8 @@ public class ControllerTest {
 
     @Test
     public void shouldCorrectlyCaculateEpicStartandDuration() {
-        assertEquals(manager.getTaskById(1).getStartTime(), manager.getTaskById(5).getStartTime());
-        assertEquals(manager.getTaskById(1).getDuration(), manager.getTaskById(5).getDuration());
+        assertEquals(manager.getTaskById(1).get().getStartTime(), manager.getTaskById(5).get().getStartTime());
+        assertEquals(manager.getTaskById(1).get().getDuration(), manager.getTaskById(5).get().getDuration());
 
         LocalDateTime start = LocalDateTime.of(2024, 1, 1, 9, 00);
         Duration duration = Duration.ofMinutes(90);
@@ -389,7 +389,8 @@ public class ControllerTest {
 
         int earlySubtaskId = manager.addTask(subTaskEarly);
 
-        assertEquals(manager.getTaskById(1).getStartTime(), manager.getTaskById(earlySubtaskId).getStartTime());
+        assertEquals(manager.getTaskById(1).get().getStartTime(),
+                manager.getTaskById(earlySubtaskId).get().getStartTime());
 
         Subtask subTaskLater = new Subtask("Subtask", "Later", 1);
         subTaskLater.setStartTime(start.plusHours(10));
@@ -397,7 +398,7 @@ public class ControllerTest {
 
         int laterSubtaskId = manager.addTask(subTaskLater);
 
-        assertEquals(manager.getTaskById(1).getEndTime(), manager.getTaskById(laterSubtaskId).getEndTime());
+        assertEquals(manager.getTaskById(1).get().getEndTime(), manager.getTaskById(laterSubtaskId).get().getEndTime());
     }
 
 }

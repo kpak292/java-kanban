@@ -160,8 +160,8 @@ public class InMemoryTaskManager implements TaskManager {
     //Получение задачи по ID
 //*Если такой задачи нет, то вернет NUll (в будущем необходимо сделать соответствующий exception)
     @Override
-    public Task getTaskById(int id) {
-        Task result = null;
+    public Optional<Task> getTaskById(int id) {
+        Task result;
 
         if (tasks.containsKey(id)) {
             result = tasks.get(id).clone();
@@ -170,14 +170,12 @@ public class InMemoryTaskManager implements TaskManager {
         } else if (subtasks.containsKey(id)) {
             result = subtasks.get(id).clone();
         } else {
-            System.out.println("Error: Task " + id + " is not found");
+            return Optional.empty();
         }
 
-        if (result != null) {
-            historyManager.add(result);
-        }
+        historyManager.add(result);
 
-        return result;
+        return Optional.of(result);
     }
 
     //Удаление задачи по ID
@@ -298,7 +296,7 @@ public class InMemoryTaskManager implements TaskManager {
             epic.setStatus(Status.IN_PROGRESS);
         }
 
-        if (start != null) {
+        if (start != LocalDateTime.MAX) {
             epic.setStartTime(start);
             epic.setDuration(Duration.between(start, end));
         }
