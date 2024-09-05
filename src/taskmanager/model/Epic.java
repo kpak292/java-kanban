@@ -1,5 +1,6 @@
 package taskmanager.model;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +22,8 @@ public class Epic extends Task {
         Epic clone = new Epic(this.name, this.description);
         clone.id = this.id;
         clone.status = this.status;
+        clone.setStartTime(this.startTime);
+        clone.setDuration(Duration.ofMinutes(this.duration));
 
         clone.subtaskIds.addAll(this.subtaskIds);
 
@@ -53,6 +56,12 @@ public class Epic extends Task {
                 .append(transform(description))
                 .append(";")
                 .append(transform(status.toString()))
+                .append(";")
+                .append(startTime == null ? "" : transform(startTime.format(formatter)))
+                .append(";")
+                .append(transform(duration))
+                .append(";")
+                .append(getEndTime() == null ? "" : transform(getEndTime().format(formatter)))
                 .append(";")
                 .append(transform(Arrays.toString(subtaskIds.toArray())))
                 .append(";");

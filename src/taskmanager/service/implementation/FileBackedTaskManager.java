@@ -14,11 +14,22 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final Path path;
-    private String header = "\"ID\";\"Type\";\"Name\";\"Description\";\"Status\";\"Subtasks\";\"EpicID\";";
+    private String header = "\"ID\";" +
+            "\"Type\";" +
+            "\"Name\";" +
+            "\"Description\";" +
+            "\"Status\";" +
+            "\"StartDate\";" +
+            "\"Duration\";" +
+            "\"EndDate\";" +
+            "\"Subtasks\";" +
+            "\"EpicID\";";
 
     public FileBackedTaskManager() throws ManagerLoadException {
         super(Managers.getDefaultHistory());
@@ -122,9 +133,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 int id = Integer.parseInt(dataArray[0]);
                 epic.setId(id);
 
+                LocalDateTime start = dataArray[5].isBlank() ? null : LocalDateTime.parse(dataArray[5], Task.formatter);
+                long duration = dataArray[6].isBlank() ? 0 : Long.parseLong(dataArray[6]);
+
+                epic.setDuration(Duration.ofMinutes(duration));
+                epic.setStartTime(start);
+
                 List<Integer> list = epic.getSubtaskIds();
 
-                String[] subids = dataArray[5]
+                String[] subids = dataArray[8]
                         .replace("[", "")
                         .replace("]", "")
                         .split(",");
@@ -139,10 +156,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 epics.put(id, epic);
             }
             case "Subtask" -> {
-                Subtask subtask = new Subtask(dataArray[2], dataArray[3], Integer.parseInt(dataArray[6]));
+                Subtask subtask = new Subtask(dataArray[2], dataArray[3], Integer.parseInt(dataArray[9]));
                 int id = Integer.parseInt(dataArray[0]);
                 subtask.setId(id);
                 subtask.setStatus(stringToStatus(dataArray[4]));
+
+                LocalDateTime start = dataArray[5].isBlank() ? null : LocalDateTime.parse(dataArray[5], Task.formatter);
+                long duration = dataArray[6].isBlank() ? 0 : Long.parseLong(dataArray[6]);
+
+                subtask.setDuration(Duration.ofMinutes(duration));
+                subtask.setStartTime(start);
+
 
                 subtasks.put(id, subtask);
             }
@@ -151,6 +175,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 int id = Integer.parseInt(dataArray[0]);
                 task.setId(id);
                 task.setStatus(stringToStatus(dataArray[4]));
+
+                LocalDateTime start = dataArray[5].isBlank() ? null : LocalDateTime.parse(dataArray[5], Task.formatter);
+                long duration = dataArray[6].isBlank() ? 0 : Long.parseLong(dataArray[6]);
+
+                task.setDuration(Duration.ofMinutes(duration));
+                task.setStartTime(start);
 
                 tasks.put(id, task);
             }

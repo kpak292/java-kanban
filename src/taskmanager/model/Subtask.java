@@ -1,5 +1,6 @@
 package taskmanager.model;
 
+import java.time.Duration;
 import java.util.Objects;
 
 public class Subtask extends Task {
@@ -21,6 +22,8 @@ public class Subtask extends Task {
         Subtask clone = new Subtask(this.name, this.description, this.epicId);
         clone.id = this.id;
         clone.status = this.status;
+        clone.setStartTime(this.startTime);
+        clone.setDuration(Duration.ofMinutes(this.duration));
 
         return clone;
     }
@@ -51,6 +54,12 @@ public class Subtask extends Task {
                 .append(transform(description))
                 .append(";")
                 .append(transform(status.toString()))
+                .append(";")
+                .append(startTime == null ? "" : transform(startTime.format(formatter)))
+                .append(";")
+                .append(transform(duration))
+                .append(";")
+                .append(getEndTime() == null ? "" : transform(getEndTime().format(formatter)))
                 .append(";")
                 .append(";")
                 .append(transform(epicId));

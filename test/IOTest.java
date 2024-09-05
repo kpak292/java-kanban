@@ -13,11 +13,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class IOTest {
     TaskManager manager;
@@ -41,12 +42,30 @@ public class IOTest {
         Task task1 = new Task("Task1", "Description3");
         Task task2 = new Task("Task2", "Description4");
 
+        LocalDateTime start1 = LocalDateTime.of(2024, 1, 1, 9, 00);
+        Duration duration = Duration.ofMinutes(90);
+
+        task1.setStartTime(start1);
+        task1.setDuration(duration);
+
+        task2.setStartTime(start1.plusHours(2));
+        task2.setDuration(duration);
+
         manager.addTask(task1);//3
         manager.addTask(task2);//4
 
         Subtask subTask1 = new Subtask("Subtask1", "Description5", epic1.getId());
         Subtask subTask2 = new Subtask("Subtask2", "Description6", epic2.getId());
         Subtask subTask3 = new Subtask("Subtask3", "Description7", epic2.getId());
+
+        subTask1.setStartTime(start1.plusHours(4));
+        subTask1.setDuration(duration);
+
+        subTask2.setStartTime(start1.plusHours(6));
+        subTask2.setDuration(duration);
+
+        subTask3.setStartTime(start1.plusHours(8));
+        subTask3.setDuration(duration);
 
         manager.addTask(subTask1);//5
         manager.addTask(subTask2);//6
@@ -99,12 +118,12 @@ public class IOTest {
 
         int sequence = newManager.addTask(task);
 
-        assertTrue(sequence == 8);
+        assertEquals(8, sequence);
     }
 
     @Test
     public void shouldSaveChanges() throws IOException {
-        Task task = manager.getTaskById(3);
+        Task task = manager.getTaskById(3).get();
         task.setStatus(Status.DONE);
 
         manager.updateTask(task);
@@ -117,7 +136,7 @@ public class IOTest {
             data.add(reader.readLine());
         }
 
-        String result = "\"3\";\"Task\";\"Task1\";\"Description3\";\"DONE\";;";
+        String result = "\"3\";\"Task\";\"Task1\";\"Description3\";\"DONE\";\"01.01.2024 09:00\";\"90\";\"01.01.2024 10:30\";;";
 
         assertTrue(data.contains(result));
 
