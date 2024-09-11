@@ -183,7 +183,7 @@ public class InMemoryTaskManager implements TaskManager {
 //*При удалении подзадачи пересчитывается статус Эпика
 //*Необходимо в будущем добавить exception (тот же что и для метода getTaskById)
     @Override
-    public void deleteTaskById(int id) {
+    public int deleteTaskById(int id) {
         Task task = null;
 
         if (tasks.containsKey(id)) {
@@ -209,7 +209,9 @@ public class InMemoryTaskManager implements TaskManager {
         historyManager.remove(id);
 
         if (task == null) {
-            System.out.println("Error: no task with such ID");
+            return -1;
+        } else {
+            return 0;
         }
     }
 
