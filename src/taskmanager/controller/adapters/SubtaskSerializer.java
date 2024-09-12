@@ -14,11 +14,15 @@ public class SubtaskSerializer implements JsonSerializer<Subtask> {
     public JsonElement serialize(Subtask task, Type type, JsonSerializationContext jsonSerializationContext) {
         JsonObject result = new JsonObject();
         result.addProperty("ID", task.getId());
-        result.addProperty("Type", task.getClass().getSimpleName());
-        result.addProperty("Name", task.getDescription());
+        result.addProperty("Type", task.getClass().getSimpleName().toUpperCase());
+        result.addProperty("Name", task.getName());
         result.addProperty("Description", task.getDescription());
         result.addProperty("Status", task.getStatus().name());
-        result.addProperty("StartTime", task.getStartTime().format(Task.formatter));
+
+        if (task.getStartTime() != null) {
+            result.addProperty("StartTime", task.getStartTime().format(Task.formatter));
+        }
+
         result.addProperty("Duration", task.getDuration().toMinutes());
 
         result.addProperty("EpicID", task.getEpicId());

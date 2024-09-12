@@ -227,13 +227,17 @@ public class InMemoryTaskManager implements TaskManager {
 //*Так же проверяем присутствие номера задачи в массиве, тк может быть передан объект из другого менеджера
 //*Необходимо в будущем добавить exception (тот же что и для метода getTaskById)
     @Override
-    public void updateTask(Task task) {
-        if (task instanceof Subtask subtask && subtasks.containsKey(task.getId())) {
+    public int updateTask(Task task) {
+        int result = 0;
+        if (task instanceof Subtask subtask &&
+                subtasks.containsKey(task.getId()) &&
+                epics.containsKey(subtask.getEpicId())) {
 
             try {
                 checkTasksOverlap(subtask);
             } catch (TaskOverlapException e) {
                 System.out.println(e.getMessage());
+                result = 1;
             }
 
             subtasks.put(task.getId(), task);
@@ -247,13 +251,15 @@ public class InMemoryTaskManager implements TaskManager {
                 checkTasksOverlap(task);
             } catch (TaskOverlapException e) {
                 System.out.println(e.getMessage());
+                result = 1;
             }
 
             tasks.put(task.getId(), task);
         } else {
-            System.out.println("Ошибка: Данной задачи нет в менеджере");
+            result = -1;
         }
 
+        return result;
     }
 
     //Обновление Эпика в зависимости от статуса подзадач

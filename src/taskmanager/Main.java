@@ -8,6 +8,5 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         ServerController.initialize();
-        //System.out.println(Status.NEW.name());
     }
 }

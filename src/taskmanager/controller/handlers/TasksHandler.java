@@ -7,6 +7,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import taskmanager.controller.adapters.EpicSerializer;
 import taskmanager.controller.adapters.SubtaskSerializer;
+import taskmanager.controller.adapters.TaskDeserializer;
 import taskmanager.controller.adapters.TaskSerializer;
 import taskmanager.model.Epic;
 import taskmanager.model.Subtask;
@@ -44,12 +45,13 @@ public class TasksHandler implements HttpHandler {
         //Получение метода
         Endpoint endpoint = getEndpoint(exchange.getRequestURI().getPath(), exchange.getRequestMethod());
 
+
         GsonBuilder builder = new GsonBuilder()
                 .setPrettyPrinting()
                 .registerTypeAdapter(Task.class, new TaskSerializer())
                 .registerTypeAdapter(Subtask.class, new SubtaskSerializer())
+                .registerTypeAdapter(Task.class, new TaskDeserializer())
                 .registerTypeAdapter(Epic.class, new EpicSerializer());
-
 
         Gson gson = builder.create();
 
@@ -94,9 +96,11 @@ public class TasksHandler implements HttpHandler {
             }
             case DELETE_EPICS -> {
                 manager.deleteTasksByType(Type.EPIC);
+                writeResponse(exchange, "SUCCESS", 200);
             }
             case DELETE_SUBTASKS -> {
                 manager.deleteTasksByType(Type.SUBTASK);
+                writeResponse(exchange, "SUCCESS", 200);
             }
             case DELETE_TASK_ID -> {
                 int taskId = Integer.parseInt(exchange
@@ -111,6 +115,32 @@ public class TasksHandler implements HttpHandler {
                 } else {
                     writeResponse(exchange, "SUCCESS", 200);
                 }
+            }
+
+            case POST_TASK -> {
+                String request = new String(exchange.getRequestBody().readAllBytes(), DEFAULT_CHARSET);
+
+                int code;
+                String response = "";
+                Task task;
+                try {
+                    task = gson.fromJson(request, Task.class);
+                    System.out.println(task);
+                    code = 200;
+
+                    if (task.getId()==0){
+                        int add = manager.addTask(task);
+                        if (add<0) throw new IllegalArgumentException("Error: Task can't be added");
+                    }else{
+                        int update = manager.updateTask(task);
+                        if (update<0) throw new IllegalArgumentException("Error: Task can't be updated");
+                    }
+                } catch (IllegalArgumentException e) {
+                    response = e.getMessage();
+                    code = 406;
+                }
+
+                writeResponse(exchange, response, code);
             }
         }
 

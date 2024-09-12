@@ -38,7 +38,7 @@ public interface TaskManager {
     //Обновление статуса задачи
     //*Так же проверяем присутствие номера задачи в массиве, тк может быть передан объект из другого менеджера
     //*Необходимо в будущем добавить exception (тот же что и для метода getTaskById)
-    void updateTask(Task task);
+    int updateTask(Task task);
 
     //Обнуление счетчика задач
     void restartCounter();
