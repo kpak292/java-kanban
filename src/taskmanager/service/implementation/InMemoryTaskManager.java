@@ -25,7 +25,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
     });
 
-
     HistoryManager historyManager;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
@@ -80,7 +79,6 @@ public class InMemoryTaskManager implements TaskManager {
         } else if (task instanceof Subtask subtask) {
 
             if (!epics.containsKey(subtask.getEpicId())) {
-                System.out.println("Error: Manager does not contains epic of provided subtask");
                 return -1;
             }
 
@@ -274,6 +272,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         if (!epics.containsKey(epicID)) {
             System.out.println("Error: Epic " + epicID + "is not found");
+            return;
         }
 
         Epic epic = (Epic) epics.get(epicID);
@@ -345,10 +344,16 @@ public class InMemoryTaskManager implements TaskManager {
         sortedList.removeIf(innerTask -> innerTask.getId() == task.getId());
     }
 
+    @Override
     public List<Task> getPrioritizedTasks() {
         return sortedList.stream()
                 .map(Task::clone)
                 .toList();
+    }
+
+    @Override
+    public List<String> getHistory() {
+        return historyManager.getHistory();
     }
 
 }

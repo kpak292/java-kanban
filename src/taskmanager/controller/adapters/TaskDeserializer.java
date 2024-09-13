@@ -52,8 +52,8 @@ public class TaskDeserializer implements JsonDeserializer<Task> {
 
         Duration duration;
         try {
-             duration = Duration.ofMinutes(object.get("Duration").getAsInt());
-        }catch (Exception e){
+            duration = Duration.ofMinutes(object.get("Duration").getAsInt());
+        } catch (Exception e) {
             duration = Duration.ofMinutes(0);
         }
 
