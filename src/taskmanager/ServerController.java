@@ -19,15 +19,18 @@ public class ServerController {
     private ServerController() {
     }
 
-
-    public static void initialize() throws IOException {
+    public static HttpServer initialize() throws IOException {
         manager = Managers.getDefault();
         start();
+
+        return server;
     }
 
-    public static void initialize(Path path) throws IOException {
+    public static HttpServer initialize(Path path) throws IOException {
         manager = Managers.getFileBacked(path);
         start();
+
+        return server;
     }
 
     private static void start() throws IOException {
@@ -45,6 +48,14 @@ public class ServerController {
 
     private static void stop() {
         server.stop(0);
+    }
+
+    public static TaskManager getManager() {
+        return manager;
+    }
+
+    public static HttpServer getServer() {
+        return server;
     }
 
     public static void main(String[] args) throws IOException {

@@ -285,7 +285,7 @@ public class AdaptersTest {
                   "Duration": 0
                 }""";
 
-        assertDoesNotThrow(() -> gson.fromJson(expected,Task.class));
+        assertDoesNotThrow(() -> gson.fromJson(expected, Task.class));
     }
 
     @Test
@@ -300,7 +300,7 @@ public class AdaptersTest {
                   "Duration": 0
                 }""";
 
-        assertDoesNotThrow(() -> gson.fromJson(expected,Task.class));
+        assertDoesNotThrow(() -> gson.fromJson(expected, Task.class));
     }
 
     @Test
@@ -315,7 +315,7 @@ public class AdaptersTest {
                   "Status": "NEW"
                 }""";
 
-        assertDoesNotThrow(() -> gson.fromJson(expected,Task.class));
+        assertDoesNotThrow(() -> gson.fromJson(expected, Task.class));
     }
 
     @Test
@@ -350,7 +350,7 @@ public class AdaptersTest {
                   "Duration": 0
                 }""";
 
-        assertDoesNotThrow(()-> gson.fromJson(expected,Task.class));
+        assertDoesNotThrow(() -> gson.fromJson(expected, Task.class));
     }
 }
 
