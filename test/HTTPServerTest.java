@@ -1,14 +1,9 @@
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import taskmanager.ServerController;
-import taskmanager.controller.adapters.EpicSerializer;
-import taskmanager.controller.adapters.SubtaskSerializer;
-import taskmanager.controller.adapters.TaskDeserializer;
-import taskmanager.controller.adapters.TaskSerializer;
 import taskmanager.model.Epic;
 import taskmanager.model.Subtask;
 import taskmanager.model.Task;
@@ -34,14 +29,8 @@ public class HTTPServerTest {
 
     HttpServer server;
     TaskManager manager;
-    GsonBuilder builder = new GsonBuilder()
-            .setPrettyPrinting()
-            .registerTypeAdapter(Task.class, new TaskSerializer())
-            .registerTypeAdapter(Subtask.class, new SubtaskSerializer())
-            .registerTypeAdapter(Task.class, new TaskDeserializer())
-            .registerTypeAdapter(Epic.class, new EpicSerializer());
 
-    Gson gson = builder.create();
+    Gson gson = ServerController.getGson();
 
     URI uri;
     HttpClient client = HttpClient.newHttpClient();
@@ -538,7 +527,7 @@ public class HTTPServerTest {
             throw new RuntimeException(e);
         }
 
-        assertEquals(404, response.statusCode());
+        assertEquals(405, response.statusCode());
     }
 
 }

@@ -1,10 +1,6 @@
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.junit.jupiter.api.Test;
-import taskmanager.controller.adapters.EpicSerializer;
-import taskmanager.controller.adapters.SubtaskSerializer;
-import taskmanager.controller.adapters.TaskDeserializer;
-import taskmanager.controller.adapters.TaskSerializer;
+import taskmanager.ServerController;
 import taskmanager.model.Epic;
 import taskmanager.model.Subtask;
 import taskmanager.model.Task;
@@ -17,14 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AdaptersTest {
-    GsonBuilder builder = new GsonBuilder()
-            .setPrettyPrinting()
-            .registerTypeAdapter(Task.class, new TaskSerializer())
-            .registerTypeAdapter(Subtask.class, new SubtaskSerializer())
-            .registerTypeAdapter(Task.class, new TaskDeserializer())
-            .registerTypeAdapter(Epic.class, new EpicSerializer());
-
-    Gson gson = builder.create();
+    Gson gson = ServerController.getGson();
 
     @Test
     public void shouldSearilizeTask() {
