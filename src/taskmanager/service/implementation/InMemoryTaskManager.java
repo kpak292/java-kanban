@@ -25,7 +25,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
     });
 
-
     HistoryManager historyManager;
 
     public InMemoryTaskManager(HistoryManager historyManager) {
@@ -80,7 +79,6 @@ public class InMemoryTaskManager implements TaskManager {
         } else if (task instanceof Subtask subtask) {
 
             if (!epics.containsKey(subtask.getEpicId())) {
-                System.out.println("Error: Manager does not contains epic of provided subtask");
                 return -1;
             }
 
@@ -183,7 +181,7 @@ public class InMemoryTaskManager implements TaskManager {
 //*При удалении подзадачи пересчитывается статус Эпика
 //*Необходимо в будущем добавить exception (тот же что и для метода getTaskById)
     @Override
-    public void deleteTaskById(int id) {
+    public int deleteTaskById(int id) {
         Task task = null;
 
         if (tasks.containsKey(id)) {
@@ -209,7 +207,9 @@ public class InMemoryTaskManager implements TaskManager {
         historyManager.remove(id);
 
         if (task == null) {
-            System.out.println("Error: no task with such ID");
+            return -1;
+        } else {
+            return 0;
         }
     }
 
@@ -225,13 +225,17 @@ public class InMemoryTaskManager implements TaskManager {
 //*Так же проверяем присутствие номера задачи в массиве, тк может быть передан объект из другого менеджера
 //*Необходимо в будущем добавить exception (тот же что и для метода getTaskById)
     @Override
-    public void updateTask(Task task) {
-        if (task instanceof Subtask subtask && subtasks.containsKey(task.getId())) {
+    public int updateTask(Task task) {
+        int result = 0;
+        if (task instanceof Subtask subtask &&
+                subtasks.containsKey(task.getId()) &&
+                epics.containsKey(subtask.getEpicId())) {
 
             try {
                 checkTasksOverlap(subtask);
             } catch (TaskOverlapException e) {
                 System.out.println(e.getMessage());
+                result = 1;
             }
 
             subtasks.put(task.getId(), task);
@@ -245,13 +249,15 @@ public class InMemoryTaskManager implements TaskManager {
                 checkTasksOverlap(task);
             } catch (TaskOverlapException e) {
                 System.out.println(e.getMessage());
+                result = 1;
             }
 
             tasks.put(task.getId(), task);
         } else {
-            System.out.println("Ошибка: Данной задачи нет в менеджере");
+            result = -1;
         }
 
+        return result;
     }
 
     //Обновление Эпика в зависимости от статуса подзадач
@@ -266,6 +272,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         if (!epics.containsKey(epicID)) {
             System.out.println("Error: Epic " + epicID + "is not found");
+            return;
         }
 
         Epic epic = (Epic) epics.get(epicID);
@@ -337,10 +344,16 @@ public class InMemoryTaskManager implements TaskManager {
         sortedList.removeIf(innerTask -> innerTask.getId() == task.getId());
     }
 
+    @Override
     public List<Task> getPrioritizedTasks() {
         return sortedList.stream()
                 .map(Task::clone)
                 .toList();
+    }
+
+    @Override
+    public List<String> getHistory() {
+        return historyManager.getHistory();
     }
 
 }
